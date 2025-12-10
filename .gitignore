@@ -5,3 +5,5 @@ llm_raw_outputs.txt
 run_log.json
 .zip
 xlsxModify/
+.env
+*.env
