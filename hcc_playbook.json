@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-10 16:57:46",
+  "updated_at": "2025-12-10 20:10:07",
   "strategies": [
     {
       "id": "d0d9644b",
@@ -173,6 +173,508 @@
         "conclusion": "成功发现候选"
       },
       "created_at": "2025-12-10 16:57:46"
+    },
+    {
+      "id": "050d58be",
+      "type": "execution_trace",
+      "fingerprint": "e7b7dca0e1a725e3f869cc8a3c7d636d",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "<decide>"
+            }
+          },
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 19:49:37"
+    },
+    {
+      "id": "66e5dcd4",
+      "type": "execution_trace",
+      "fingerprint": "f9da17fcfe4127fcb311687d676b98ce",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "search_literature",
+            "args": {
+              "query": "liver cancer novel therapeutic target"
+            }
+          },
+          "run_omics"
+        ],
+        "step_details": [
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 19:49:37"
+    },
+    {
+      "id": "22148755",
+      "type": "execution_trace",
+      "fingerprint": "cf2b708d412a1902f449c84d1846c81e",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_opentargets",
+            "args": {}
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 19:49:37"
+    },
+    {
+      "id": "ce3a0475",
+      "type": "execution_trace",
+      "fingerprint": "71d42b604e03fd824ab8fe30f61ec0d2",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": "<decide>"
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 19:49:37"
+    },
+    {
+      "id": "315a1a5f",
+      "type": "execution_trace",
+      "fingerprint": "757cefa275bbcaec763d3edd4203d6ce",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "query_opentargets",
+            "args": {}
+          },
+          "run_omics",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": "<decide>"
+            }
+          },
+          "<decide>"
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:01:27"
+    },
+    {
+      "id": "219abd0f",
+      "type": "execution_trace",
+      "fingerprint": "7e349b2c002af3f61b88a9d5e3b5da5f",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "search_literature",
+            "args": {
+              "query": "liver cancer novel therapeutic target"
+            }
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:01:27"
+    },
+    {
+      "id": "7d965297",
+      "type": "execution_trace",
+      "fingerprint": "7dc27b3c6596b1d59b5ddcb654de9903",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": "<decide>"
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:01:27"
+    },
+    {
+      "id": "a02feeda",
+      "type": "execution_trace",
+      "fingerprint": "8b4446bb7ac3c85924ecf762c5ef920f",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": "<decide>"
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "<decide>"
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:01:27"
+    },
+    {
+      "id": "f36084b8",
+      "type": "execution_trace",
+      "fingerprint": "306df40ef538e65d947b71e108bb734c",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_kg",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:10:07"
+    },
+    {
+      "id": "1d90f8fb",
+      "type": "execution_trace",
+      "fingerprint": "d7072b96fe3513abd548555b60b7167b",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_opentargets",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:10:07"
+    },
+    {
+      "id": "517e823b",
+      "type": "execution_trace",
+      "fingerprint": "dd0fc7aea34ae7803b3335ff082d4657",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "search_literature",
+          {
+            "tool": "search_literature",
+            "args": {
+              "gene": "TP53"
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": false,
+            "note": "错误: No gene/query provided"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-10 20:10:07"
     }
   ]
 }

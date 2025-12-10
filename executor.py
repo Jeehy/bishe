@@ -56,6 +56,17 @@ class ToolExecutor:
         func = self.tools.get(step)
         if func is None:
             return {"type": step, "error": f"未知工具: {step}"}
+        
+        for k, v in task_context.items():
+            if isinstance(v, str) and "<decide>" in v:
+                msg = f"Parameter '{k}' is a placeholder '{v}'. Execution skipped."
+                print(f"   ⚠️ [Executor] {msg} Waiting for Decider to fill it.")
+                return {
+                    "type": step,
+                    "status": "skipped",
+                    "reason": msg,
+                    "summary": "Step skipped due to pending decision (<decide> placeholder)."
+                }
             
         # 1. 基础 params 包含 task
         params = {"task": task_context.get("task", {})}

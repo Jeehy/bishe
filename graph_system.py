@@ -51,7 +51,19 @@ class GraphTargetDiscovery:
                 
                 # 将结构化数据转为自然语言描述
                 status_icon = "✅" if data.get("status") == "success" else "❌"
-                steps_str = " -> ".join(data.get("steps_summary", []))
+                raw_steps = data.get("steps_summary", [])
+                safe_steps = []
+                for st in raw_steps:
+                    if isinstance(st, dict):
+                        # 如果是字典（带参数的步骤），只提取工具名
+                        tool_name = st.get("tool", str(st))
+                        # 可选：如果你想让 Prompt 看到参数，可以写成 f"{tool_name}({st.get('args')})"
+                        # 这里为了简洁，只用工具名
+                        safe_steps.append(tool_name)
+                    else:
+                        safe_steps.append(str(st))
+                
+                steps_str = " -> ".join(safe_steps)
                 
                 # 提取关键的失败点或亮点
                 details_str = ""

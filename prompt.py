@@ -58,6 +58,8 @@ TASK_UNDERSTAND_PROMPT = """
 {user_input}
 """
 
+# prompt.py
+
 PATH_PLANNER_PROMPT = """
 路径生成（Path Planner）
 输入 task_understanding JSON，并且系统可用工具: [{available_tools}]
@@ -67,26 +69,26 @@ PATH_PLANNER_PROMPT = """
 请生成 2~4 条候选路径（JSON 数组）。每条路径对象包含：
 - path_id: 唯一 id
 - steps: 动作列表。
-  - **重要**: 如果某个步骤需要特定参数（如查询特定基因），请使用对象格式：{{"tool": "工具名", "args": {{ "key": "value" }} }}。
-  - 如果不需要参数，可以直接用字符串 "工具名"。
-  - 允许使用特殊占位符 "<decide>"。
+  - **核心原则**: 只规划你确信当前可以执行、或参数已知的步骤。
+  - **不要预判参数**: 如果某个步骤（如 search_literature）依赖于上一步（如 run_omics）产生的具体基因，**请不要在计划中写出该步骤**，或者仅使用 "<decide>" 占位符。
+  - **交给运行时**: 系统会在每一步执行后自动检查结果，并动态插入验证步骤。你不需要提前规划具体的基因验证。
 - reason: 简短理由
 
-示例输出:
+示例输出 (注意：不要把 <decide> 填入 args):
 [
    {{
       "path_id": "p1",
       "steps": [
           {{"tool": "search_literature", "args": {{"gene": "TP53"}} }},
           "run_omics",
-          "<decide>"
+          "<decide>" 
       ],
-      "reason": "用户明确指定查询TP53，因此第一步必须带参数调用；随后结合组学验证"
+      "reason": "用户明确指定查询TP53，因此第一步必须带参数；随后跑组学，之后由系统动态决定如何验证新发现的基因"
    }},
    {{
       "path_id": "p2",
-      "steps": ["run_omics", "query_kg"],
-      "reason": "无特定目标基因，先进行广撒网式的数据驱动挖掘"
+      "steps": ["run_omics", "query_opentargets"],
+      "reason": "先获取数据和全量背景知识，具体的单基因验证留给运行时决策"
    }}
 ]
 
