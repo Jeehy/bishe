@@ -1,0 +1,852 @@
+{
+  "updated_at": "2025-12-09 21:16:11",
+  "strategies": [
+    {
+      "id": "35228b5e",
+      "type": "execution_trace",
+      "fingerprint": "c6d1a2ae500f26d6bc7633656d5e08c7",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "run_omics",
+          "<decide>",
+          "query_mongo_local"
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:30:20"
+    },
+    {
+      "id": "5a4bdf47",
+      "type": "execution_trace",
+      "fingerprint": "2c6f01e9f8eea7ed60064606ee24c4c8",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "<decide>",
+          "query_kg",
+          "run_omics",
+          "query_opentargets",
+          "query_mongo_local"
+        ],
+        "step_details": [
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:30:20"
+    },
+    {
+      "id": "599df2f3",
+      "type": "execution_trace",
+      "fingerprint": "15c0dea027b59ce7b747f80adba54cab",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_opentargets",
+          "query_kg",
+          "query_mongo_local"
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:30:20"
+    },
+    {
+      "id": "8697aeec",
+      "type": "execution_trace",
+      "fingerprint": "1bfadc7849521a5c7f75bee170d425ea",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "query_kg",
+          "<decide>",
+          "run_omics",
+          "query_mongo_local"
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:30:20"
+    },
+    {
+      "id": "0679f96b",
+      "type": "execution_trace",
+      "fingerprint": "14aaddaa6740579275dbd9fe8ffbf913",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_opentargets",
+            "args": {},
+            "reason": "post_step_insert"
+          },
+          "query_kg",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          "query_opentargets"
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:36:42"
+    },
+    {
+      "id": "cd3e6f76",
+      "type": "execution_trace",
+      "fingerprint": "9801940c44a357edaaa901c9496d78ff",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          "query_mongo_local",
+          {
+            "tool": "query_kg",
+            "args": {},
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:36:42"
+    },
+    {
+      "id": "47b5585b",
+      "type": "execution_trace",
+      "fingerprint": "7cddaf6bd36d57f9f0393428be3adc9f",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "query_kg",
+          "run_omics",
+          "query_mongo_local",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "需要从run_omics历史中提取的具体基因名"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_opentargets",
+            "args": {},
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": []
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-11-28 14:36:42"
+    },
+    {
+      "id": "ad276bd6",
+      "type": "execution_trace",
+      "fingerprint": "4888cad6f873902baa4cf35ebe1c0509",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_kg",
+          "query_opentargets",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": []
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-05 14:18:48"
+    },
+    {
+      "id": "a5085e4b",
+      "type": "execution_trace",
+      "fingerprint": "9f6df3a4fb5714d096d5314b09552c75",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          "query_kg",
+          "query_mongo_local",
+          {
+            "tool": "query_opentargets",
+            "args": {},
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-05 14:18:48"
+    },
+    {
+      "id": "3bdd4eb9",
+      "type": "execution_trace",
+      "fingerprint": "cce5160c4719fc2e65f9c33c4aff60b7",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          "query_opentargets",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": []
+            },
+            "reason": "post_step_insert"
+          },
+          "query_mongo_local",
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-05 14:18:48"
+    },
+    {
+      "id": "11ce9a36",
+      "type": "execution_trace",
+      "fingerprint": "05955d0f93186dc14c370c6b76b6bb56",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": []
+            },
+            "reason": "post_step_insert"
+          },
+          "query_opentargets",
+          "query_mongo_local",
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_mongo_local",
+            "args": {},
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-09 21:16:11"
+    },
+    {
+      "id": "c0c5bf1e",
+      "type": "execution_trace",
+      "fingerprint": "c5b90e00b518698d6218d6373709aa79",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "query_opentargets",
+          "run_omics",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          "query_kg",
+          "query_mongo_local",
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": []
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-09 21:16:11"
+    },
+    {
+      "id": "f39ca3da",
+      "type": "execution_trace",
+      "fingerprint": "0319a30df2eef6da6c44f20afa4bb416",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_kg",
+          "query_mongo_local",
+          {
+            "tool": "query_opentargets",
+            "args": {},
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_mongo_local",
+            "args": {},
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "PAGE2",
+                "MAGEA4",
+                "TP53"
+              ]
+            },
+            "reason": "post_step_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_mongo_local",
+            "effective": false,
+            "note": "错误: no query"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-09 21:16:11"
+    }
+  ]
+}
