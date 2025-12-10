@@ -2,13 +2,14 @@
 # DeepSeek 调用封装（支持真实 API 与本地 stub）
 # - 若设置环境变量 DEEPSEEK_URL/DEEPSEEK_API_KEY，则调用真实接口
 # - 否则使用本地 deterministic stub 以便离线开发
-
+from dotenv import load_dotenv
 import os
 import json
 import requests
 
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
-DEEPSEEK_API_KEY = "sk-1b7bdfd06ecf4a468b3f22047357b9da" 
+load_dotenv()
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
 def model_call_real(prompt: str, model_name: str = "deepseek-chat", timeout: int = 60) -> str:
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {DEEPSEEK_API_KEY}"}
