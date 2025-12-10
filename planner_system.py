@@ -86,9 +86,25 @@ class PlannerSystem:
         for item in intermediate:
             clean_item = item.copy()
             result = clean_item.get("result", {})
-            
+            tool_type = result.get("type", "")
+            if isinstance(result, dict) and tool_type in ["search_literature", "search_pubmed_mongo", "query_mongo_local"]:
+                # 提取专门给 LLM 读的 'summary'
+                summary_text = result.get("summary", "")
+                clean_res = {
+                    "type": tool_type,
+                    "search_mode": result.get("search_mode", "unknown"),
+                    "subject": result.get("subject", "unknown"),
+                    "n_results": result.get("n_results", 0),
+                    "summary": summary_text 
+                }
+                if "raw_results" in clean_res:
+                    del clean_res["raw_results"]
+                if "results" in clean_res: 
+                    del clean_res["results"] 
+                clean_item["result"] = clean_res
+                
             # Omics 结果，只保留 Top 50，防止几千个基因塞爆 Prompt
-            if isinstance(result, dict) and result.get("type") == "run_omics":
+            elif isinstance(result, dict) and result.get("type") == "run_omics":
                 omics_res = result.get("results", {})
                 if isinstance(omics_res, dict):
                     clean_res = {

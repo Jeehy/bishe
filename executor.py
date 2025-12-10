@@ -13,7 +13,7 @@ def get_available_tools():
         "query_kg",
         "run_omics",
         "query_opentargets",
-        "query_mongo_local"
+        "search_literature"
     ]
 
 
@@ -29,8 +29,9 @@ class ToolExecutor:
         self.tools = {
             "query_kg": self._run_kg,
             "run_omics": self._run_omics,
-            "query_mongo_local": self._run_mongo_local,
-            "query_opentargets": self._run_opentargets
+            "query_opentargets": self._run_opentargets,
+            "search_literature": self._run_mongo_local,
+            "query_mongo_local": self._run_mongo_local
         }
 
     # ==================================
