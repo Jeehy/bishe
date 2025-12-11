@@ -7,3 +7,4 @@ run_log.json
 xlsxModify/
 .env
 *.env
+evidence_data/

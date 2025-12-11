@@ -1,14 +1,13 @@
-"""MongoLocalTool -> HybridLiteratureTool
-本地向量数据库 + PubMed 在线混合检索工具 (重构版)
+# tools/mongo_local_tool.py
+
+"""
+MongoLocalTool -> HybridLiteratureTool
+本地向量数据库 + PubMed 在线混合检索工具 (支持批量精准归位版)
 
 功能：
 1. 混合检索：同时从本地 MongoDB (Vector) 和 PubMed Online 获取证据
-2. 多路召回：Gene 模式下自动生成多维查询
-3. 鲁棒性：本地或在线任一渠道失败不影响整体运行
-
-依赖: 
-- sentence-transformers, faiss-cpu, numpy, pymongo
-- PubMedTool (tools.pubmed_tool) <--- 新增依赖
+2. 多路召回：Gene 模式下自动生成多维查询 (机制/预后/治疗)
+3. 批量处理：支持传入 genes 列表，自动循环并标记归属，实现精准溯源
 """
 
 import logging
@@ -45,8 +44,7 @@ class MongoLocalTool:
         self.collection = None
         
         # 初始化 PubMed 在线工具
-        # 建议在此处或 executor 中统一管理邮箱配置
-        self.pubmed = PubMedTool(email="your_email@example.com")
+        self.pubmed = PubMedTool()
 
     def _connect(self):
         """连接 MongoDB"""
@@ -55,7 +53,7 @@ class MongoLocalTool:
             self.client = MongoClient(host=self.host, port=self.port, serverSelectionTimeoutMS=2000)
             self.db = self.client[self.db_name]
             self.collection = self.db[self.collection_name]
-            self.client.admin.command('ping')
+            # self.client.admin.command('ping') # 可选：检查连接
             logger.debug(f"Connected to MongoDB {self.host}:{self.port}/{self.db_name}")
         except Exception as e:
             logger.exception(f"Failed to connect to MongoDB: {e}")
@@ -180,73 +178,79 @@ class MongoLocalTool:
 
     def _search_evidence_by_gene(self, gene_name: str) -> List[Dict]:
         """针对 Gene 的多路混合召回"""
+        # 针对肝癌 (Hepatocellular Carcinoma) 的特定查询模板
+        # 也可以从 context 里传 disease 进来动态拼接
         queries = [
-            ("clinical_prognosis", f"{gene_name} hepatocellular carcinoma prognosis survival"),
+            ("clinical", f"{gene_name} hepatocellular carcinoma prognosis survival"),
             ("mechanism", f"{gene_name} signaling pathway liver cancer mechanism"),
-            ("drug_therapy", f"{gene_name} inhibitor therapeutic target HCC")
+            ("therapy", f"{gene_name} inhibitor therapeutic target HCC")
         ]
         
         all_results = []
         seen_hashes = set()
         
+        # 每个方面只取最精华的 (本地2 + 在线1)，避免结果爆炸
         for aspect, query_text in queries:
-            # 混合检索：本地 3 条 + 在线 2 条
-            results = self._hybrid_search(query_text, top_k_local=3, top_k_online=2)
+            results = self._hybrid_search(query_text, top_k_local=2, top_k_online=1)
             
             for item in results:
-                # 去重
                 content_hash = hash(item['content'][:100])
                 if content_hash not in seen_hashes:
                     item['aspect'] = aspect
                     item['matched_query'] = query_text
+                    # 【关键】不要在这里加 related_gene，而在外层加，防止复用逻辑混乱
                     all_results.append(item)
                     seen_hashes.add(content_hash)
         
         return all_results
 
-    def _generate_summary(self, results: List[Dict], subject: str) -> str:
-        """生成 Markdown 综述"""
+    def _generate_summary(self, results: List[Dict], subject: str, mode: str) -> str:
+        """生成 Markdown 综述 (支持多基因分组)"""
         if not results:
             return f"未找到关于 {subject} 的文献证据 (本地+在线)。"
             
-        results.sort(key=lambda x: x.get('aspect', 'general'))
-        
         lines = []
-        lines.append(f"### 📚 {subject} 文献证据综述 (混合检索)")
-        local_count = sum(1 for r in results if r.get('source_type') == 'Local')
-        online_count = sum(1 for r in results if r.get('source_type') == 'Online')
-        lines.append(f"> 检索结果: {len(results)} 条 (本地: {local_count}, 在线 PubMed: {online_count})\n")
+        lines.append(f"### 📚 文献检索综述: {subject}")
+        lines.append(f"> 总计条目: {len(results)} \n")
         
-        for aspect, group in groupby(results, key=lambda x: x.get('aspect', 'general')):
-            title_map = {
-                "clinical_prognosis": "🏥 临床预后 (Prognosis)",
-                "mechanism": "🔬 分子机制 (Mechanism)",
-                "drug_therapy": "💊 药物治疗 (Therapy)",
-                "general": "🔍 通用检索结果"
-            }
-            display_title = title_map.get(aspect, aspect.capitalize())
-            lines.append(f"**{display_title}**")
-            
-            for item in group:
-                content = item['content'].replace('\n', ' ')
-                if len(content) > 300: content = content[:300] + "..."
-                
-                title = item['source_metadata']['paper_title']
-                src_type = item.get('source_type', 'Local')
-                icon = "🏠" if src_type == "Local" else "🌐"
-                
-                lines.append(f"- {icon} [{src_type}] {content} *[Src: {title}]*")
+        # 如果是批量模式，按 related_gene 分组展示
+        if mode == "batch_gene":
+            # 先按 gene 排序，再 groupby
+            results.sort(key=lambda x: x.get('related_gene', 'Unknown'))
+            for gene, gene_items in groupby(results, key=lambda x: x.get('related_gene', 'Unknown')):
+                lines.append(f"#### 🧬 基因: {gene}")
+                gene_items_list = list(gene_items)
+                # 内部再按 aspect 分组
+                gene_items_list.sort(key=lambda x: x.get('aspect', 'general'))
+                for aspect, group in groupby(gene_items_list, key=lambda x: x.get('aspect', 'general')):
+                    aspect_icon = {"clinical": "🏥", "mechanism": "🔬", "therapy": "💊", "general": "🔍"}.get(aspect, "📄")
+                    lines.append(f"**{aspect_icon} {aspect.capitalize()}**")
+                    for item in group:
+                        content = item['content'].replace('\n', ' ')[:200] + "..."
+                        src = item.get('source_type', 'Unknown')
+                        title = item['source_metadata']['paper_title']
+                        lines.append(f"- [{src}] {content} *({title})*")
+                lines.append("")
+        else:
+            # 单基因或 Query 模式
+            results.sort(key=lambda x: x.get('aspect', 'general'))
+            for aspect, group in groupby(results, key=lambda x: x.get('aspect', 'general')):
+                lines.append(f"**{aspect.capitalize()}**")
+                for item in group:
+                    content = item['content'].replace('\n', ' ')[:250] + "..."
+                    lines.append(f"- {content}")
             lines.append("")
         
         return "\n".join(lines)
 
     def run(self, context: Dict) -> Dict:
         """
-        工具入口
+        工具入口 - 支持批量 genes 处理
         """
-        print(f"[MongoLocalTool]: 正在检索文献\n")
+        print(f"[MongoLocalTool]: 正在检索文献...")
+        
         gene = context.get("gene")
-        if not gene and context.get("genes"): gene = context.get("genes")[0]
+        genes = context.get("genes") # 获取列表参数
         query = context.get("query")
         
         results = []
@@ -254,31 +258,58 @@ class MongoLocalTool:
         search_mode = ""
 
         try:
-            if gene:
-                search_subject = gene
-                search_mode = "gene_hybrid_mining"
-                logger.info(f"Running Gene Hybrid Mode for: {gene}")
-                results = self._search_evidence_by_gene(gene)
+            # === 优先处理批量基因列表 ===
+            if genes and isinstance(genes, list) and len(genes) > 0:
+                search_mode = "batch_gene"
+                search_subject = f"Batch of {len(genes)} genes"
+                # 限制批量处理数量，防止超时 (例如只查前 10 个，或全部)
+                # target_genes = genes[:10] 
+                target_genes = genes # 全量查询，Planner会控制传入数量
                 
+                print(f"  > 批量检索模式: {len(target_genes)} 个基因")
+                
+                for g in target_genes:
+                    if not g: continue
+                    # 检索单基因
+                    g_res = self._search_evidence_by_gene(g)
+                    
+                    # 【核心修改】精准标记：为每条结果打上 related_gene 标签
+                    for item in g_res:
+                        item['related_gene'] = g
+                    
+                    results.extend(g_res)
+                    print(f"    - {g}: 找到 {len(g_res)} 条证据")
+
+            # === 处理单个基因 ===
+            elif gene:
+                search_subject = gene
+                search_mode = "single_gene"
+                logger.info(f"Running Gene Mode for: {gene}")
+                results = self._search_evidence_by_gene(gene)
+                for r in results: r['related_gene'] = gene # 保持一致性
+                
+            # === 处理通用文本查询 ===
             elif query:
                 search_subject = query
-                search_mode = "general_hybrid_search"
-                logger.info(f"Running General Hybrid Mode for: {query}")
+                search_mode = "general_query"
+                logger.info(f"Running General Mode for: {query}")
                 results = self._hybrid_search(query, top_k_local=3, top_k_online=3)
                 for r in results: r['aspect'] = 'general'
             
             else:
-                return {"type": "search_literature", "error": "No gene/query provided"}
+                return {"type": "search_literature", "error": "No gene/genes/query provided"}
 
-            summary = self._generate_summary(results, search_subject)
+            # 生成综述 (供 LLM 阅读)
+            summary = self._generate_summary(results, search_subject, search_mode)
 
+            # 返回结构 (raw_results 供 Planner 精准提取)
             return {
                 "type": "search_literature",
                 "subject": search_subject,
                 "search_mode": search_mode,
                 "n_results": len(results),
                 "summary": summary,
-                "raw_results": results,
+                "raw_results": results, # 这里的每个 item 都必须包含 'related_gene'
                 "error": None
             }
 
@@ -295,12 +326,14 @@ class MongoLocalTool:
 if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO)
-    print("🚀 Testing Hybrid Tool (Local + PubMed)...")
+    print("🚀 Testing Hybrid Tool (Batch Mode)...")
     
-    try:
-        # 请确保 MongoDB 有 evidence_chunks 集合，或者它会优雅降级只显示 Online 结果
-        tool = MongoLocalTool(db_name="bio", collection_name="evidence_chunks")
-        res = tool.run({"gene": "TP53"})
-        print(f"\n{res['summary']}")
-    except Exception as e:
-        print(f"Failed: {e}")
+    tool = MongoLocalTool(db_name="bio", collection_name="evidence_chunks")
+    # 模拟批量查询
+    res = tool.run({"genes": ["TP53", "MAGEA1", "UNKNOWN_GENE_123"]})
+    print(f"\n{res['summary']}")
+    
+    # 验证 raw_results 结构
+    print("\n[Check Raw Results]:")
+    for r in res['raw_results'][:3]:
+        print(f"Gene: {r.get('related_gene')} | Title: {r['source_metadata']['paper_title']}")
