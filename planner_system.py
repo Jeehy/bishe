@@ -95,7 +95,7 @@ class PlannerSystem:
         steps = list(path_spec.get("steps", []))
         history = [] 
         active_genes_bus = [] # 上下文总线
-        
+        searched_genes_history = set()
         evidence_dir = f"evidence_data/{path_id}"
         os.makedirs(evidence_dir, exist_ok=True)
         print(f"\n🚀 [Path: {path_id}] 开始执行，共 {len(steps)} 步...")
@@ -125,6 +125,30 @@ class PlannerSystem:
             # 2. 上下文总线：参数自动注入
             self._inject_context_genes(tool_name, tool_args, active_genes_bus, path_id)
 
+            if tool_name == "search_literature":
+                # 获取当前参数中的基因列表
+                target_genes = tool_args.get("genes", [])
+                if isinstance(target_genes, str): target_genes = [target_genes]
+                
+                # 过滤掉已经查过的基因
+                new_genes = [g for g in target_genes if g not in searched_genes_history]
+                
+                # 如果有被过滤的，打印日志
+                if len(new_genes) < len(target_genes):
+                    skipped = set(target_genes) - set(new_genes)
+                    print(f"     🧹 [Deduplication] 跳过已检索基因: {list(skipped)}")
+                
+                # 如果过滤后没有基因了，跳过此步
+                if not new_genes:
+                    print(f"     ⏭️ [Skip] 所有目标基因均已检索过文献，跳过此步。")
+                    logs.append({"type": "skip", "step": tool_name, "reason": "duplicate_genes"})
+                    i += 1
+                    continue
+                
+                # 更新参数和历史记录
+                tool_args["genes"] = new_genes
+                searched_genes_history.update(new_genes)
+
             # 3. 执行工具
             logs.append({"type":"executing", "step": tool_name, "args": tool_args})
             print(f"  👉 [Path: {path_id}] [Step {i+1}] 执行: {tool_name} | 参数: {list(tool_args.keys())}")
@@ -133,16 +157,23 @@ class PlannerSystem:
             tool_output = self.executor.execute(tool_name, task_context, history=history)
 
             # 4. 上下文总线：结果捕获
-            new_genes = extract_genes_from_result(tool_name, tool_output)
-            if new_genes:
-                active_genes_bus = new_genes
-                print(f"     📥 [Path: {path_id}] [Bus] 捕获 {len(new_genes)} 个新基因")
+            # 4. 上下文总线：结果捕获
+            # 🆕 [Fix] 验证模式锁定：防止 OpenTargets 等工具返回的关联基因干扰主线
+            if str(path_id).startswith("verify_"):
+                print(f"     🔒 [Path: {path_id}] [Bus] 验证模式")
+            else:
+                # 只有非验证模式（发现模式）才允许发散思维
+                new_genes = extract_genes_from_result(tool_name, tool_output)
+                if new_genes:
+                    active_genes_bus = new_genes
+                    print(f"     📥 [Path: {path_id}] [Bus] 捕获 {len(new_genes)} 个新基因")
+            # === 修改结束 ===
 
             # 5. 保存证据 & 更新历史
             self._save_evidence_file(evidence_dir, i, tool_name, tool_args, tool_output, path_id)
             history.append({"step": tool_name, "args": tool_args, "result": tool_output})
             logs.append({"type":"step", "step": tool_name, "summary": {"step": tool_name, "type": "tool_result"}})
-
+            
             # 6. 动态决策 (Post-Step)
             if self._handle_dynamic_decision(history, steps, i, logs, path_id, is_pre_step=False):
                 if logs[-1].get("decision", {}).get("decision") == "STOP": break
@@ -283,19 +314,35 @@ class PlannerSystem:
             
             # (C) 文献证据
             if tool in ["search_literature", "search_pubmed_mongo"]:
-                n_res = result.get("n_results", 0)
-                if n_res > 0:
-                    # 获取这一步查询的目标基因
-                    target_genes = step_data.get("args", {}).get("genes", [])
-                    if isinstance(target_genes, str): target_genes = [target_genes]
-                    single_gene = step_data.get("args", {}).get("gene")
-                    if single_gene: target_genes.append(single_gene)
+                
+                # 🆕 优先检查是否存在结构化的 gene_details
+                gene_details = result.get("gene_details", {})
+                
+                if gene_details:
+                    # 如果有详情，直接精准匹配
+                    for g_key, detail in gene_details.items():
+                        count = detail.get("count", 0)
+                        summary = detail.get("summary", "")
+                        if count > 0:
+                            # 格式：[Step X Lit] (5篇) 这是一个癌基因...
+                            ev_str = f"[Step {step_num} Lit] ({count}篇) {summary}"
+                            if g_key.upper() not in gene_evidence_map: gene_evidence_map[g_key.upper()] = []
+                            gene_evidence_map[g_key.upper()].append(ev_str)
+                
+                else:
+                    # ⚠️ 旧逻辑回退（如果没有 gene_details，才用总数）
+                    n_res = result.get("n_results", 0)
+                    if n_res > 0:
+                        target_genes = step_data.get("args", {}).get("genes", [])
+                        if isinstance(target_genes, str): target_genes = [target_genes]
+                        single_gene = step_data.get("args", {}).get("gene")
+                        if single_gene: target_genes.append(single_gene)
 
-                    for tg in target_genes:
-                        if not tg: continue
-                        ev_str = f"[Step {step_num} Lit] 检索到 {n_res} 篇文献"
-                        if g_name.upper() not in gene_evidence_map: gene_evidence_map[tg.upper()] = []
-                        gene_evidence_map[tg.upper()].append(ev_str)
+                        for tg in target_genes:
+                            if not tg: continue
+                            ev_str = f"[Step {step_num} Lit] 检索到 {n_res} 篇文献(总计)"
+                            if tg.upper() not in gene_evidence_map: gene_evidence_map[tg.upper()] = []
+                            gene_evidence_map[tg.upper()].append(ev_str)
 
             # (D) KG 证据
             if tool == "query_kg" and "evidence" in result:

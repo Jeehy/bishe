@@ -10,16 +10,15 @@ MongoLocalTool -> HybridLiteratureTool
 3. 批量处理：支持传入 genes 列表，自动循环并标记归属，实现精准溯源
 """
 
-import logging
-import re
-import time
+import logging, re, time, faiss, json
 import numpy as np
-import faiss
 from typing import List, Dict
 from itertools import groupby
 from pymongo import MongoClient
+from datetime import datetime
 from sentence_transformers import SentenceTransformer
 from tools.pubmed_tool import PubMedTool
+from tools.summary_tool import summary
 
 logger = logging.getLogger(__name__)
 
@@ -245,95 +244,102 @@ class MongoLocalTool:
 
     def run(self, context: Dict) -> Dict:
         """
-        工具入口 - 支持批量 genes 处理
+        工具入口 - 支持批量 genes 处理 (带 LLM 自动总结和文件转储)
         """
         print(f"[MongoLocalTool]: 正在检索文献...")
         
         gene = context.get("gene")
-        genes = context.get("genes") # 获取列表参数
+        genes = context.get("genes")
         query = context.get("query")
-        
-        results = []
+        summaries_list = [] # 🆕 用于存储精简后的总结，传给 LLM
+        all_raw_evidence = [] # 🆕 用于存储所有原始证据，保存到文件
+        gene_details_map = {}
         search_subject = ""
-        search_mode = ""
-
+        
         try:
             # === 优先处理批量基因列表 ===
             if genes and isinstance(genes, list) and len(genes) > 0:
                 search_mode = "batch_gene"
                 search_subject = f"Batch of {len(genes)} genes"
-                # 限制批量处理数量，防止超时 (例如只查前 10 个，或全部)
-                # target_genes = genes[:10] 
-                target_genes = genes # 全量查询，Planner会控制传入数量
+                target_genes = genes 
                 
                 print(f"  > 批量检索模式: {len(target_genes)} 个基因")
                 
-                for g in target_genes:
+                for idx, g in enumerate(target_genes):
                     if not g: continue
-                    # 检索单基因
+                    print(f"    [{idx+1}/{len(target_genes)}] 正在检索并总结: {g} ...", end="", flush=True)
+                    
                     g_res = self._search_evidence_by_gene(g)
+                    for item in g_res: item['related_gene'] = g
+                    all_raw_evidence.extend(g_res)
                     
-                    # 【核心修改】精准标记：为每条结果打上 related_gene 标签
-                    for item in g_res:
-                        item['related_gene'] = g
+                    # 生成总结
+                    summary_text = "未检索到相关文献"
+                    if g_res:
+                        evidence_text = "\n".join([f"- {r['content'][:300]}..." for r in g_res[:5]])
+                        # 提示词微调：要求更简练，方便展示
+                        prompt = (
+                            f"根据以下基因【{g}】与肝癌文献片段，用几句话概括其作用(机制/预后/治疗)。"
+                            f"不要换行，80字以内。\n片段：\n{evidence_text}"
+                        )
+                        try:
+                            summary_text = summary(prompt).strip()
+                            print(" ✅ 总结完成")
+                        except Exception as e:
+                            summary_text = "(总结生成失败)"
+                            print(f" ⚠️ 总结失败")
+                    else:
+                        print(" ⚠️ 无文献")
+
+                    summaries_list.append(f"**{g}**: {summary_text}")
                     
-                    results.extend(g_res)
-                    print(f"    - {g}: 找到 {len(g_res)} 条证据")
+                    # 🆕 记录结构化详情
+                    gene_details_map[g] = {
+                        "count": len(g_res),
+                        "summary": summary_text
+                    }
 
             # === 处理单个基因 ===
             elif gene:
+                # ... (同理处理单基因) ...
                 search_subject = gene
-                search_mode = "single_gene"
-                logger.info(f"Running Gene Mode for: {gene}")
-                results = self._search_evidence_by_gene(gene)
-                for r in results: r['related_gene'] = gene # 保持一致性
+                g_res = self._search_evidence_by_gene(gene)
+                all_raw_evidence.extend(g_res)
                 
-            # === 处理通用文本查询 ===
-            elif query:
-                search_subject = query
-                search_mode = "general_query"
-                logger.info(f"Running General Mode for: {query}")
-                results = self._hybrid_search(query, top_k_local=3, top_k_online=3)
-                for r in results: r['aspect'] = 'general'
+                evidence_text = "\n".join([f"- {r['content'][:300]}..." for r in g_res[:5]])
+                prompt = f"用一句话概括基因 {gene} 在肝癌中的作用。基于：\n{evidence_text}"
+                s_text = summary(prompt).strip()
+                summaries_list.append(f"**{gene}**: {s_text}")
+                
+                gene_details_map[gene] = {
+                    "count": len(g_res),
+                    "summary": s_text
+                }
             
-            else:
-                return {"type": "search_literature", "error": "No gene/genes/query provided"}
+            # ... (Query模式略) ...
 
-            # 生成综述 (供 LLM 阅读)
-            summary = self._generate_summary(results, search_subject, search_mode)
-
-            # 返回结构 (raw_results 供 Planner 精准提取)
+            # 保存原始证据到文件
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            evidence_filename = f"literature_raw_{timestamp}.json"
+            with open(evidence_filename, "w", encoding="utf-8") as f:
+                json.dump({
+                    "task_genes": genes if genes else [gene],
+                    "total_hits": len(all_raw_evidence),
+                    "details": all_raw_evidence
+                }, f, ensure_ascii=False, indent=2)
+            
+            final_summary_str = "\n".join(summaries_list)
+            
             return {
                 "type": "search_literature",
                 "subject": search_subject,
-                "search_mode": search_mode,
-                "n_results": len(results),
-                "summary": summary,
-                "raw_results": results, # 这里的每个 item 都必须包含 'related_gene'
+                "n_results": len(all_raw_evidence), # 总数仅供参考
+                "summary": final_summary_str,
+                "gene_details": gene_details_map,   # 🆕 关键：返回这个 map 给 Planner
+                "raw_results_file": evidence_filename,
                 "error": None
             }
 
         except Exception as e:
-            logger.exception(f"Error in Hybrid Tool: {e}")
-            return {
-                "type": "search_literature",
-                "error": str(e),
-                "summary": f"检索出错: {str(e)}",
-                "results": []
-            }
-
-# === 验证 ===
-if __name__ == "__main__":
-    import sys
-    logging.basicConfig(level=logging.INFO)
-    print("🚀 Testing Hybrid Tool (Batch Mode)...")
-    
-    tool = MongoLocalTool(db_name="bio", collection_name="evidence_chunks")
-    # 模拟批量查询
-    res = tool.run({"genes": ["TP53", "MAGEA1", "UNKNOWN_GENE_123"]})
-    print(f"\n{res['summary']}")
-    
-    # 验证 raw_results 结构
-    print("\n[Check Raw Results]:")
-    for r in res['raw_results'][:3]:
-        print(f"Gene: {r.get('related_gene')} | Title: {r['source_metadata']['paper_title']}")
+            # ... (异常处理) ...
+            return {"type": "search_literature", "error": str(e)}

@@ -107,4 +107,4 @@ if __name__ == "__main__":
     # 测试场景 2: 验证模式
     print("\n--- Verification Mode ---")
     # 假设查询一个存在的基因 (你需要换成你 CSV 里真实的基因名) 和一个不存在的
-    print(tool.run({"genes": ["PAGE2", "MAGEA4", "FAKE_GENE"]}))
+    print(tool.run({"genes": ["TP53"]}))

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2025-12-11 14:59:57",
+  "updated_at": "2025-12-13 21:02:54",
   "strategies": [
     {
       "id": "d0d9644b",
@@ -2020,6 +2020,814 @@
         "conclusion": "成功发现候选"
       },
       "created_at": "2025-12-11 14:59:57"
+    },
+    {
+      "id": "26bcf961",
+      "type": "execution_trace",
+      "fingerprint": "33925fa6e7727edbbc8ff6c3bdb1cbef",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_opentargets",
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "TUBB1",
+                "TUBB8",
+                "BRCA1",
+                "BRCA2",
+                "TUBB2A",
+                "TUBB6",
+                "TUBB2B",
+                "TUBB",
+                "TP53",
+                "TUBB4B"
+              ]
+            },
+            "reason": "dynamic_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-12 13:50:25"
+    },
+    {
+      "id": "087f5bb4",
+      "type": "execution_trace",
+      "fingerprint": "006085c5b8064deb3b2972c16d70736c",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "run_omics",
+          "query_kg",
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "MAGEA10",
+                "RLBP1",
+                "KRT6B",
+                "KLK10",
+                "PRSS2",
+                "CHST5",
+                "MAGEA9",
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MS4A10",
+                "BMP7",
+                "HTN1",
+                "ENSG00000306848",
+                "MAGEA4",
+                "ENSG00000297227",
+                "KLK7",
+                "HS3ST4",
+                "CTAG1B",
+                "CEACAM5"
+              ]
+            },
+            "reason": "dynamic_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-12 13:50:25"
+    },
+    {
+      "id": "e59b9f07",
+      "type": "execution_trace",
+      "fingerprint": "af3429328ae972d23d91b90c17de4d75",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          "search_literature",
+          {
+            "tool": "run_omics",
+            "args": {},
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "MAGEA10",
+                "RLBP1",
+                "KRT6B",
+                "KLK10",
+                "PRSS2",
+                "CHST5",
+                "MAGEA9",
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MS4A10",
+                "BMP7",
+                "HTN1",
+                "ENSG00000306848",
+                "MAGEA4",
+                "ENSG00000297227",
+                "KLK7",
+                "HS3ST4",
+                "CTAG1B",
+                "CEACAM5"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          "run_omics"
+        ],
+        "step_details": [
+          {
+            "step": "search_literature",
+            "effective": false,
+            "note": "错误: No gene/genes/query provided"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-12 13:50:25"
+    },
+    {
+      "id": "b2ff4fe8",
+      "type": "execution_trace",
+      "fingerprint": "3d348eee798a7a832dd1e84c4164871d",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "run_omics",
+            "args": {}
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "RLBP1",
+                "PRSS2",
+                "ENSG00000306848",
+                "KRT6B",
+                "CEACAM5",
+                "ENSG00000297227",
+                "KLK10",
+                "ENSG00000308209",
+                "MAGEA9",
+                "HTN3",
+                "BMP7",
+                "MAGEA10",
+                "MS4A10",
+                "HS3ST4",
+                "CHST5",
+                "CTAG1B",
+                "HTN1",
+                "MAGEA4",
+                "KLK7",
+                "PAGE2"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "RLBP1",
+                "PRSS2",
+                "ENSG00000306848",
+                "KRT6B",
+                "CEACAM5",
+                "ENSG00000297227",
+                "KLK10",
+                "ENSG00000308209",
+                "MAGEA9",
+                "HTN3",
+                "BMP7",
+                "MAGEA10",
+                "MS4A10",
+                "HS3ST4",
+                "CHST5",
+                "CTAG1B",
+                "HTN1",
+                "MAGEA4",
+                "KLK7",
+                "PAGE2"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "RLBP1",
+                "PRSS2",
+                "ENSG00000306848",
+                "KRT6B",
+                "CEACAM5",
+                "ENSG00000297227",
+                "KLK10",
+                "ENSG00000308209",
+                "MAGEA9",
+                "HTN3",
+                "BMP7",
+                "MAGEA10",
+                "MS4A10",
+                "HS3ST4",
+                "CHST5",
+                "CTAG1B",
+                "HTN1",
+                "MAGEA4",
+                "KLK7",
+                "PAGE2"
+              ]
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 20:15:46"
+    },
+    {
+      "id": "3e1f133b",
+      "type": "execution_trace",
+      "fingerprint": "9ed6fae7340e409f0b74fa99685ce805",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "run_omics",
+            "args": {}
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MAGEA10",
+                "CHST5",
+                "ENSG00000297227",
+                "RLBP1",
+                "ENSG00000306848",
+                "HS3ST4",
+                "MAGEA4",
+                "KLK7",
+                "HTN1",
+                "KLK10",
+                "BMP7",
+                "MAGEA9",
+                "PRSS2",
+                "KRT6B",
+                "MS4A10",
+                "CEACAM5",
+                "CTAG1B"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MAGEA10",
+                "CHST5",
+                "ENSG00000297227",
+                "RLBP1",
+                "ENSG00000306848",
+                "HS3ST4",
+                "MAGEA4",
+                "KLK7",
+                "HTN1",
+                "KLK10",
+                "BMP7",
+                "MAGEA9",
+                "PRSS2",
+                "KRT6B",
+                "MS4A10",
+                "CEACAM5",
+                "CTAG1B"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "query": "liver cancer survival",
+              "genes": [
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MAGEA10",
+                "CHST5",
+                "ENSG00000297227",
+                "RLBP1",
+                "ENSG00000306848",
+                "HS3ST4",
+                "MAGEA4",
+                "KLK7",
+                "HTN1",
+                "KLK10",
+                "BMP7",
+                "MAGEA9",
+                "PRSS2",
+                "KRT6B",
+                "MS4A10",
+                "CEACAM5",
+                "CTAG1B"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "HTN3",
+                "ENSG00000308209",
+                "PAGE2",
+                "MAGEA10",
+                "CHST5",
+                "ENSG00000297227",
+                "RLBP1",
+                "ENSG00000306848",
+                "HS3ST4",
+                "MAGEA4",
+                "KLK7",
+                "HTN1",
+                "KLK10",
+                "BMP7",
+                "MAGEA9",
+                "PRSS2",
+                "KRT6B",
+                "MS4A10",
+                "CEACAM5",
+                "CTAG1B"
+              ]
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": false,
+            "note": "错误: name 'json' is not defined"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 20:31:57"
+    },
+    {
+      "id": "fe3e181e",
+      "type": "execution_trace",
+      "fingerprint": "b967dbff0c587588586ce9fb4c03cd9d",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "run_omics",
+            "args": {}
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "CHST5",
+                "KRT6B",
+                "HTN3",
+                "MAGEA10",
+                "ENSG00000308209",
+                "MS4A10",
+                "PRSS2",
+                "HS3ST4",
+                "ENSG00000306848",
+                "PAGE2",
+                "ENSG00000297227",
+                "MAGEA9",
+                "RLBP1",
+                "BMP7",
+                "CTAG1B",
+                "KLK7",
+                "KLK10",
+                "CEACAM5",
+                "MAGEA4",
+                "HTN1"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "CHST5",
+                "KRT6B",
+                "HTN3",
+                "MAGEA10",
+                "ENSG00000308209",
+                "MS4A10",
+                "PRSS2",
+                "HS3ST4",
+                "ENSG00000306848",
+                "PAGE2",
+                "ENSG00000297227",
+                "MAGEA9",
+                "RLBP1",
+                "BMP7",
+                "CTAG1B",
+                "KLK7",
+                "KLK10",
+                "CEACAM5",
+                "MAGEA4",
+                "HTN1"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "CHST5",
+                "KRT6B",
+                "HTN3",
+                "MAGEA10",
+                "ENSG00000308209",
+                "MS4A10",
+                "PRSS2",
+                "HS3ST4",
+                "ENSG00000306848",
+                "PAGE2",
+                "ENSG00000297227",
+                "MAGEA9",
+                "RLBP1",
+                "BMP7",
+                "CTAG1B",
+                "KLK7",
+                "KLK10",
+                "CEACAM5",
+                "MAGEA4",
+                "HTN1"
+              ]
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 20:35:47"
+    },
+    {
+      "id": "0e27601b",
+      "type": "execution_trace",
+      "fingerprint": "e2cf2b6072315f32dba22a40951bf5b1",
+      "data": {
+        "task": "尝试发现肝癌潜在靶点",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "run_omics",
+            "args": {}
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "KRT6B",
+                "MAGEA4",
+                "PRSS2",
+                "KLK10",
+                "CHST5",
+                "KLK7",
+                "HTN1",
+                "CEACAM5",
+                "CTAG1B",
+                "RLBP1",
+                "HS3ST4",
+                "MAGEA9",
+                "PAGE2",
+                "ENSG00000306848",
+                "ENSG00000308209",
+                "BMP7",
+                "MAGEA10",
+                "ENSG00000297227",
+                "MS4A10",
+                "HTN3"
+              ]
+            },
+            "reason": "dynamic_insert"
+          },
+          {
+            "tool": "query_kg",
+            "args": {
+              "genes": [
+                "KRT6B",
+                "MAGEA4",
+                "PRSS2",
+                "KLK10",
+                "CHST5",
+                "KLK7",
+                "HTN1",
+                "CEACAM5",
+                "CTAG1B",
+                "RLBP1",
+                "HS3ST4",
+                "MAGEA9",
+                "PAGE2",
+                "ENSG00000306848",
+                "ENSG00000308209",
+                "BMP7",
+                "MAGEA10",
+                "ENSG00000297227",
+                "MS4A10",
+                "HTN3"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "KRT6B",
+                "MAGEA4",
+                "PRSS2",
+                "KLK10",
+                "CHST5",
+                "KLK7",
+                "HTN1",
+                "CEACAM5",
+                "CTAG1B",
+                "RLBP1",
+                "HS3ST4",
+                "MAGEA9",
+                "PAGE2",
+                "ENSG00000306848",
+                "ENSG00000308209",
+                "BMP7",
+                "MAGEA10",
+                "ENSG00000297227",
+                "MS4A10",
+                "HTN3"
+              ]
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "query_kg",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 20:44:10"
+    },
+    {
+      "id": "94cdd881",
+      "type": "execution_trace",
+      "fingerprint": "8a7361ed1f11891b334e15983481e9d7",
+      "data": {
+        "task": "验证TP53",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          },
+          {
+            "tool": "run_omics",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "TUBB4B",
+                "TUBB6",
+                "TUBB8",
+                "BRCA2",
+                "TUBB1",
+                "TUBB",
+                "TUBB2A",
+                "BRCA1",
+                "TUBB2B"
+              ]
+            },
+            "reason": "dynamic_insert"
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 20:59:17"
+    },
+    {
+      "id": "177f0383",
+      "type": "execution_trace",
+      "fingerprint": "0bc152d027ed949a05a36b6c91c36de7",
+      "data": {
+        "task": "验证TP53",
+        "status": "success",
+        "steps_summary": [
+          {
+            "tool": "query_opentargets",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          },
+          {
+            "tool": "search_literature",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          },
+          {
+            "tool": "run_omics",
+            "args": {
+              "genes": [
+                "TP53"
+              ]
+            }
+          }
+        ],
+        "step_details": [
+          {
+            "step": "query_opentargets",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "search_literature",
+            "effective": true,
+            "note": "执行正常"
+          },
+          {
+            "step": "run_omics",
+            "effective": true,
+            "note": "执行正常"
+          }
+        ],
+        "conclusion": "成功发现候选"
+      },
+      "created_at": "2025-12-13 21:02:54"
     }
   ]
 }

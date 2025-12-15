@@ -1,4 +1,5 @@
 # targets/graph_system.py
+import re
 import concurrent.futures
 from typing import Dict
 from langgraph.graph import StateGraph, END
@@ -34,74 +35,83 @@ class GraphTargetDiscovery:
 
     # --- Node: 规划 (引入 Playbook ) ---
     def planner(self, state: TargetDiscoveryState) -> Dict:
-        user_input = state["user_input"]
-        print(f"🔍 [Planner] 正在分析任务: {user_input[:50]}...")
-
-        # 1. 检索历史策略
-        # 注意：这里 retrieve_strategies 内部可能需要简单适配一下，
-        # 如果你的检索是纯关键词匹配，现有的逻辑应该也能搜到（因为 'data' 字段里有 task 文本）
-        strategies = self.playbook.retrieve_strategies(user_input, top_k=3)
-        strategy_context = ""
-        if strategies:
-            print(f"   📖 检索到 {len(strategies)} 条相关历史案例")
-            formatted_cases = []
-            for i, s in enumerate(strategies):
-                data = s.get("data", {})
-                if not data: continue 
-                
-                # 将结构化数据转为自然语言描述
-                status_icon = "✅" if data.get("status") == "success" else "❌"
-                raw_steps = data.get("steps_summary", [])
-                safe_steps = []
-                for st in raw_steps:
-                    if isinstance(st, dict):
-                        # 如果是字典（带参数的步骤），只提取工具名
-                        tool_name = st.get("tool", str(st))
-                        # 可选：如果你想让 Prompt 看到参数，可以写成 f"{tool_name}({st.get('args')})"
-                        # 这里为了简洁，只用工具名
-                        safe_steps.append(tool_name)
-                    else:
-                        safe_steps.append(str(st))
-                
-                steps_str = " -> ".join(safe_steps)
-                
-                # 提取关键的失败点或亮点
-                details_str = ""
-                for step in data.get("step_details", []):
-                    if not step["effective"]:
-                        details_str += f"\n      - ⚠️ 步骤 [{step['step']}] 效果不佳: {step['note']}"
-                
-                case_desc = (
-                    f"案例 {i+1} [{status_icon} {data.get('status')}]:\n"
-                    f"    路径: {steps_str}\n"
-                    f"    结果: {data.get('conclusion')}"
-                    f"{details_str}"
-                )
-                formatted_cases.append(case_desc)
-            strategy_context = "\n【历史执行经验参考】:\n" + "\n".join(formatted_cases)
-
-        # 2. 理解任务 (注入策略上下文)
-        enhanced_input = f"{user_input}\n{strategy_context}"
-        task = self.core_system.understand_task(enhanced_input)
-        # 3. 规划路径
-        planned_resp = self.core_system.plan_paths(task)
+        user_input = state["user_input"].strip()
+        print(f"🔒 [Planner] 收到任务: {user_input}")
         
-        # 兼容 List 和 Dict 两种返回格式 ===
-        if isinstance(planned_resp, list):
-            paths = planned_resp
-        elif isinstance(planned_resp, dict):
-            paths = planned_resp.get("paths", [])
+        paths = []
+        task_info = {}
+        # === 规则 1: 验证模式 (格式: "验证" + 基因名) ===
+        # 正则解释:
+        # ^       : 从字符串开头匹配
+        # 验证    : 必须包含“验证”二字
+        # \s* : 允许中间有空格，也可以没有 (兼容 "验证TP53" 和 "验证 TP53")
+        # ([a-zA-Z0-9]+) : 捕获组，提取后面的英文/数字作为基因名
+        match = re.match(r"^验证\s*([a-zA-Z0-9]+)", user_input)
+        if match:
+            # 提取基因名并转大写
+            target_gene = match.group(1).upper()
+            print(f"   🎯 [规则命中] 验证模式 | 目标基因: {target_gene}")
+
+            # 构造验证任务 (无需 LLM)
+            task_info = {
+                "task_type": "verification",
+                "target_gene": target_gene,
+                "context": "Hepatocellular Carcinoma"
+            }
+
+            # 构造验证路径: OpenTargets -> Literature -> Omics
+            paths = [{
+                "path_id": f"verify_{target_gene}",
+                "steps": [
+                    {
+                        "tool": "query_opentargets", 
+                        "args": {"genes": [target_gene]}
+                    },
+                    {
+                        "tool": "search_literature", 
+                        "args": {"genes": [target_gene]}
+                    },
+                    {
+                        "tool": "run_omics", 
+                        "args": {"genes": [target_gene]} 
+                    }
+                ]
+            }]
+
+        # === 规则 2: 发现模式 (其他所有输入) ===
         else:
-            print(f"⚠️ [Planner] 警告：无法解析 LLM 返回的路径格式: {type(planned_resp)}")
-            paths = []
+            print(f"   🔍 [默认模式] 发现模式 (Discovery Mode)")
             
-        print(f"   ✅ 规划了 {len(paths)} 条路径")
+            # 调用 LLM 理解复杂任务
+            task_info = self.core_system.understand_task(user_input)
+            
+            # 构造发现路径
+            paths = [{
+                "path_id": "discovery_pipeline",
+                "steps": [
+                    {
+                        "tool": "run_omics", 
+                        "args": {} 
+                    },
+                    {
+                        "tool": "query_kg", 
+                        "args": {"genes": "<decide>"} 
+                    },
+                    {
+                        "tool": "search_literature", 
+                        "args": {"genes": "<decide>"} 
+                    }
+                ]
+            }]
+
+        print(f"   ✅ 路径规划完成")
 
         return {
-            "task_understanding": task,
+            "task_understanding": task_info,
             "planned_paths": paths,
             "logs": [{"type": "plan", "content": paths}]
         }
+    
 
     # --- Node: 执行 (并行加速) ---
     def executor(self, state: TargetDiscoveryState) -> Dict:
@@ -148,9 +158,30 @@ class GraphTargetDiscovery:
     def synthesizer(self, state: TargetDiscoveryState) -> Dict:
         print("🧠 [Synthesizer] 正在综合结果...")
         results = state["path_results"]
+        task_info = state.get("task_understanding", {}) # 获取任务信息
+
         reflection = self.core_system.reflect_paths(results)
         final_candidates = self.deDuplicate(results)
         
+        # === 🆕 [Fix] 验证模式强制过滤 ===
+        # 如果是验证任务，只保留用户指定的目标基因，剔除 OpenTargets 等工具带来的"伴随"结果
+        if task_info.get("task_type") == "verification":
+            target_gene = task_info.get("target_gene", "").upper()
+            if target_gene:
+                print(f"   🔒 [Verification Filter] 验证模式生效，仅保留目标基因: {target_gene}")
+                filtered = []
+                for cand in final_candidates:
+                    # 获取候选基因名 (兼容字典或字符串格式)
+                    c_gene = cand.get("gene") if isinstance(cand, dict) else str(cand)
+                    if str(c_gene).upper() == target_gene:
+                        filtered.append(cand)
+                
+                final_candidates = filtered
+                
+                # 如果过滤后为空（可能是别名问题或没查到），做一个兜底提示
+                if not final_candidates:
+                    print(f"   ⚠️ 警告：目标基因 {target_gene} 未出现在候选列表中，可能缺乏证据。")
+
         return {
             "reflection": reflection,
             "final_candidates": final_candidates
@@ -178,9 +209,6 @@ class GraphTargetDiscovery:
                 step_name = h.get("step")
                 result = h.get("result", {})
                 
-                # 简单判断有效性规则：
-                # - 报错了 -> 无效
-                # - 返回结果数量为0 -> 无效 (针对查询类工具)
                 is_effective = True
                 note = "执行正常"
                 if isinstance(result, dict):
