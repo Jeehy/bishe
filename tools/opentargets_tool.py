@@ -76,7 +76,7 @@ class OpenTargetsTool:
         # 3. [关键修改] 验证模式过滤
         # 如果指定了 genes，只返回这些基因的结果
         if target_genes_set:
-            print(f"🔍 [OpenTargets] 正在筛选特定基因: {target_genes_set}")
+            print(f"    🔍 [OpenTargets] 正在筛选特定基因: {target_genes_set}")
             filtered_res = [r for r in res if r["symbol"].upper() in target_genes_set]
             
             # 检查是否有基因没找到
@@ -104,30 +104,3 @@ class OpenTargetsTool:
             "results": res, # 返回 Top 200
             "n_results": len(res)
         }
-
-# ==========================================
-# Main 函数入口
-# ==========================================
-if __name__ == "__main__":
-    tool = OpenTargetsTool()
-
-    print("--- 测试: 验证 TP53 在肝癌中的关联评分 ---")
-    
-    # 构造上下文，模拟 Agent 的输入
-    context = {
-        "topic": "hepatocellular carcinoma",  # 查询疾病
-        "genes": ["TP53"]                     # 指定只查询 TP53
-    }
-
-    # 执行工具
-    result = tool.run(context)
-
-    # 打印格式化结果
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-
-    # 简单的断言检查
-    if result.get("results") and result["results"][0]["symbol"] == "TP53":
-        score = result["results"][0]["score"]
-        print(f"\n✅ 成功获取 TP53 数据! OpenTargets 关联评分: {score}")
-    else:
-        print("\n❌ 未找到 TP53 数据")

@@ -1,0 +1,143 @@
+{
+  "task_genes": [
+    "TP53"
+  ],
+  "total_hits": 9,
+  "details": [
+    {
+      "content": "Background: TP53 mutation is the most common mutation in hepatocellular carcinoma (HCC), and it affects the progression and prognosis of HCC. We investigated how TP53 mutation regulates the HCC immunophenotype and thus affects the prognosis of HCC. Methods: We investigated TP53 mutation status and RNA expression in different populations and platforms and developed an immune prognostic model (IPM) based on immune-related genes that were differentially expressed between TP53 WT and TP53 MUT HCC samples. Then, the influence of the IPM on the immune microenvironment in HCC was comprehensively analysed. Findings: TP53 mutation resulted in the downregulation of the immune response in HCC. Thirty-seven of the 312 immune response-related genes were differentially expressed based on TP53 mutation status. An IPM was established and validated based on 865 patients with HCC to differentiate patients with a low or high risk of poor survival. A nomogram was also established for clinical application. Functional enrichment analysis showed that the humoral immune response and immune system diseases pathway represented the major function and pathway, respectively, related to the IPM genes. Moreover, we found that the patients in the high-risk group had higher fractions of T cells follicular helper, T cells regulatory (Tregs) and macrophages M0 and presented higher expression of CTLA-4, PD-1 and TIM-3 than the low-risk group. Interpretation: TP53 mutation is strongly related to the immune microenvironment in HCC. Our IPM, which is sensitive to TP53 mutation status, may have important implications for identifying subgroups of HCC patients with low or high risk of unfavourable survival.",
+      "source_metadata": {
+        "paper_title": "Development and validation of a TP53-associated immune prognostic model for hepatocellular carcinoma",
+        "section": "Abstract",
+        "filename": "WXC6JPNL.grobid.json"
+      },
+      "scores": {
+        "final": 0.8508
+      },
+      "source_type": "Local",
+      "aspect": "clinical",
+      "matched_query": "TP53 hepatocellular carcinoma prognosis survival",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "We found that the immune phenotype was related to TP53 mutation and developed and validated an immune prognostic model for hepatocellular carcinoma that was affected by TP53 mutation status. This model is based on the expression of 2 immune genes that differentiate patients with a low or high risk of poor survival in both the training and validation cohorts. Our study included 865 patients with hepatocellular carcinoma to establish and validate an immune prognostic model, and to our knowledge, it is the largest prognostic model discovery project for hepatocellular carcinoma. Our results suggest that this immune prognostic model is more accurate than clinicopathological risk factors alone. We further developed a nomogram to predict patient prognosis, and it consisted of the immune prognostic model, vascular tumour invasion and hepatitis C status.",
+      "source_metadata": {
+        "paper_title": "Development and validation of a TP53-associated immune prognostic model for hepatocellular carcinoma",
+        "section": "Added value of this study",
+        "filename": "WXC6JPNL.grobid.json"
+      },
+      "scores": {
+        "final": 0.811
+      },
+      "source_type": "Local",
+      "aspect": "clinical",
+      "matched_query": "TP53 hepatocellular carcinoma prognosis survival",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "We performed the first proteogenomic characterization of hepatitis B virus  (HBV)-related hepatocellular carcinoma (HCC) using paired tumor and adjacent  liver tissues from 159 patients. Integrated proteogenomic analyses revealed  consistency and discordance among multi-omics, activation status of key signaling  pathways, and liver-specific metabolic reprogramming in HBV-related HCC.  Proteomic profiling identified three subgroups associated with clinical and  molecular attributes including patient survival, tumor thrombus, genetic profile,  and the liver-specific proteome. These proteomic subgroups have distinct features  in metabolic reprogramming, microenvironment dysregulation, cell proliferation,  and potential therapeutics. Two prognostic biomarkers, PYCR2 and ADH1A, related  to proteomic subgrouping and involved in HCC metabolic reprogramming, were  identified. CTNNB1 and TP53 mutation-associated signaling and metabolic profiles  were revealed, among which mutated CTNNB1-associated ALDOA phosphorylation was  validated to promote glycolysis and cell proliferation. Our study provides a  valuable resource that significantly expands the knowledge of HBV-related HCC and  may eventually benefit clinical practice.",
+      "source_metadata": {
+        "paper_title": "Integrated Proteogenomic Characterization of HBV-Related Hepatocellular  Carcinoma.",
+        "section": "Abstract",
+        "filename": "PubMed Online"
+      },
+      "scores": {
+        "final": 0.95
+      },
+      "source_type": "Online",
+      "aspect": "clinical",
+      "matched_query": "TP53 hepatocellular carcinoma prognosis survival",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "In conclusion, the role of ZBTB20 in liver tumourigenesis appears to involve hepatic hypertrophy and hepatomegaly augmented by TP53 inactivation. Experimental animals coinjected with ZBTB20/shp53 have increased tumour multiplicity and hepatomegaly associated with enhanced hepatic hypertrophy associated with activation of the WNT/CTNNB1 pathway via the interaction and suppression of PPARG expression. Based on the several methods of reverse genetics for both in vivo and in vitro validation, the role of ZBTB20 as a novel oncogene and its mechanism involved with HCC tumourigenesis has been implicated.",
+      "source_metadata": {
+        "paper_title": "ZBTB20 regulates WNT/CTNNB1 signalling pathway by suppressing PPARG during hepatocellular carcinoma tumourigenesis",
+        "section": "Discussion",
+        "filename": "QA6CPV94.grobid.json"
+      },
+      "scores": {
+        "final": 0.7346
+      },
+      "source_type": "Local",
+      "aspect": "mechanism",
+      "matched_query": "TP53 signaling pathway liver cancer mechanism",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "Across experimental models, we have found that loss of hepatic p53 is associated with worsening liver disease and high levels of lipid peroxidation. In Trp53/TP53 wild-type murine and human HCC cell lines, we show that the antioxidant gene Tigar/ TIGAR is induced after HFHS treatment and supports redox control. The same is true in vivo, although interestingly, we also observed p53-independent TIGAR induction within a subset of liver Trp53-deficient mice. This observation may reflect reliance on additional antioxidant programmes, such as the NRF2 pathway which can also engage TIGAR, 61 as compensation for Trp53 loss.",
+      "source_metadata": {
+        "paper_title": "p53 and TIGAR promote redox control to protect against metabolic dysfunction-associated steatohepatitis",
+        "section": "Discussion",
+        "filename": "CKM6AUUS.grobid.json"
+      },
+      "scores": {
+        "final": 0.7216
+      },
+      "source_type": "Local",
+      "aspect": "mechanism",
+      "matched_query": "TP53 signaling pathway liver cancer mechanism",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "BACKGROUND: Colorectal cancer (CRC) ranks as the second-leading cause of  cancer-related death worldwide with metastases being the main cause of  cancer-related death. Here, we investigated the genomic and transcriptomic  alterations in matching adjacent normal tissues, primary tumors, and metastatic  tumors of CRC patients. METHODS: We performed whole genome sequencing (WGS),  multi-region whole exome sequencing (WES), simultaneous single-cell RNA-Seq, and  single-cell targeted cDNA Sanger sequencing on matching adjacent normal tissues,  primary tumors, and metastatic tumors from 12 metastatic colorectal cancer  patients (n=84 for genomes, n=81 for exomes, n=9120 for single cells).  Patient-derived tumor organoids were used to estimate the anti-tumor effects of a  PPAR inhibitor, and self-renewal and differentiation ability of stem cell-like  tumor cells. RESULTS: We found that the PPAR signaling pathway was prevalently  and aberrantly activated in CRC tumors. Blocking of PPAR pathway both suppressed  the growth and promoted the apoptosis of CRC organoids in vitro, indicating that  aberrant activation of the PPAR signaling pathway plays a critical role in CRC  tumorigenesis. Using matched samples from the same patient, distinct origins of  the metastasized tumors between lymph node and liver were revealed, which was  further verified by both copy number variation and mitochondrial mutation  profiles at single-cell resolution. By combining single-cell RNA-Seq and  single-cell point mutation identification by targeted cDNA Sanger sequencing, we  revealed important phenotypic differences between cancer cells with and without  critical point mutations (KRAS and TP53) in the same patient in vivo at  single-cell resolution. CONCLUSIONS: Our data provides deep insights into how  driver mutations interfere with the transcriptomic state of cancer cells in vivo  at a single-cell resolution. Our findings offer novel knowledge on metastatic  mechanisms as well as potential markers and therapeutic targets for CRC diagnosis  and therapy. The high-precision single-cell RNA-seq dataset of matched adjacent  normal tissues, primary tumors, and metastases from CRCs may serve as a rich  resource for further studies.",
+      "source_metadata": {
+        "paper_title": "Single-cell genomic and transcriptomic landscapes of primary and metastatic  colorectal cancer tumors.",
+        "section": "Abstract",
+        "filename": "PubMed Online"
+      },
+      "scores": {
+        "final": 0.95
+      },
+      "source_type": "Online",
+      "aspect": "mechanism",
+      "matched_query": "TP53 signaling pathway liver cancer mechanism",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "In lung adenocarcinoma, TP53 mutation can significantly increase the expression of immune checkpoints, activate effector T cells and increase interferon gamma levels [23] . TP53 mutation can also be used as a predictor of anti-PD-1 immunotherapy in lung cancer [41] . Therefore, it is necessary to further investigate the immune-related effects of TP53 status. However, the mechanism by which TP53 mutation affects the regulation of the HCC immunophenotype and the prognosis of HCC is unknown. In addition, it is important to develop meaningful immune-related prognostic models to determine the immune status of patients because these models represent powerful prognostic biomarkers and can also be used to stratify patients to increase the effectiveness of immunotherapy. In recent years, gene expression signatures representative of tumour immune status have been identified, and their potential clinical relevance in several cancers has been evaluated [42, 43] . Several studies have sought to elucidate the immune microenvironment in HCC [44, 45] . Rather than employing immune privilege, HCC in fact coordinates a robust immune response involving the innate and adaptive immune systems [44, 45] . However, the role of local immune response status in HCC prognosis prediction has not been explored. In the current study, we investigated the role of TP53 mutations in the regulation of immune phenotype in HCC. In GSEA analysis, we found that TP53 WT HCCs had a significantly stronger local immunophenotype than TP53 MUT HCCs. Then, we profiled an immune-related gene set affected by TP53 mutation and generated a 2-gene-based IPM that could identify patients with HCC who had a high risk of unfavourable prognosis. The results obtained in this study may reveal a feasible therapeutic strategy that involves shaping the immune microenvironment to improve clinical outcomes. The genes (TREM-1 and EXO1) that constitute our IPM could be regarded as individual targets, and they may provide better performance in combination, depending on their immune properties and prognostic significance.",
+      "source_metadata": {
+        "paper_title": "Development and validation of a TP53-associated immune prognostic model for hepatocellular carcinoma",
+        "section": "Discussion",
+        "filename": "WXC6JPNL.grobid.json"
+      },
+      "scores": {
+        "final": 0.7328
+      },
+      "source_type": "Local",
+      "aspect": "therapy",
+      "matched_query": "TP53 inhibitor therapeutic target HCC",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "In summary, for the first time, we identified and validated an IPM that is based on 2 immune genes, has independent prognostic significance for HCC patients and reflects the overall intensity of the immune response in the HCC microenvironment. This study is also the first to describe an IPM associated with TP53 mutations and can be used as a reference for understanding other cancers. Notably, the IPM provides an immunological perspective to elucidate the mechanisms that determine the clinical outcome of HCC.",
+      "source_metadata": {
+        "paper_title": "Development and validation of a TP53-associated immune prognostic model for hepatocellular carcinoma",
+        "section": "Discussion",
+        "filename": "WXC6JPNL.grobid.json"
+      },
+      "scores": {
+        "final": 0.6879
+      },
+      "source_type": "Local",
+      "aspect": "therapy",
+      "matched_query": "TP53 inhibitor therapeutic target HCC",
+      "related_gene": "TP53"
+    },
+    {
+      "content": "Liver cancer has the second highest worldwide cancer mortality rate and has  limited therapeutic options. We analyzed 363 hepatocellular carcinoma (HCC) cases  by whole-exome sequencing and DNA copy number analyses, and we analyzed 196 HCC  cases by DNA methylation, RNA, miRNA, and proteomic expression also. DNA  sequencing and mutation analysis identified significantly mutated genes,  including LZTR1, EEF1A1, SF3B1, and SMARCA4. Significant alterations by mutation  or downregulation by hypermethylation in genes likely to result in HCC metabolic  reprogramming (ALB, APOB, and CPS1) were observed. Integrative molecular HCC  subtyping incorporating unsupervised clustering of five data platforms identified  three subtypes, one of which was associated with poorer prognosis in three HCC  cohorts. Integrated analyses enabled development of a p53 target gene expression  signature correlating with poor survival. Potential therapeutic targets for which  inhibitors exist include WNT signaling, MDM4, MET, VEGFA, MCL1, IDH1, TERT, and  immune checkpoint proteins CTLA-4, PD-1, and PD-L1.",
+      "source_metadata": {
+        "paper_title": "Comprehensive and Integrative Genomic Characterization of Hepatocellular  Carcinoma.",
+        "section": "Abstract",
+        "filename": "PubMed Online"
+      },
+      "scores": {
+        "final": 0.95
+      },
+      "source_type": "Online",
+      "aspect": "therapy",
+      "matched_query": "TP53 inhibitor therapeutic target HCC",
+      "related_gene": "TP53"
+    }
+  ]
+}

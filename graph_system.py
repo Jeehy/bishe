@@ -19,111 +19,151 @@ class GraphTargetDiscovery:
         workflow = StateGraph(TargetDiscoveryState)
 
         # === 1. 定义节点 (Nodes) ===
-        workflow.add_node("planner", self.planner)
+        # 新增意图分析节点
+        workflow.add_node("analyze_intent", self.analyze_intent)
+        # 拆分规划节点
+        workflow.add_node("plan_discovery", self.plan_discovery)
+        workflow.add_node("plan_verification", self.plan_verification)
+        
         workflow.add_node("executor", self.executor)
         workflow.add_node("synthesizer", self.synthesizer)
         workflow.add_node("curator", self.curator)
 
         # === 2. 定义流程 (Edges) ===
-        workflow.set_entry_point("planner")
-        workflow.add_edge("planner", "executor")
+        # 入口指向意图分析
+        workflow.set_entry_point("analyze_intent")
+
+        # 添加条件边：根据意图分流
+        workflow.add_conditional_edges(
+            "analyze_intent",
+            self.route_based_on_intent,
+            {
+                "verification": "plan_verification",
+                "discovery": "plan_discovery"
+            }
+        )
+
+        # 分流后殊途同归，都进入执行器
+        workflow.add_edge("plan_discovery", "executor")
+        workflow.add_edge("plan_verification", "executor")
+        
         workflow.add_edge("executor", "synthesizer")
         workflow.add_edge("synthesizer", "curator")
         workflow.add_edge("curator", END)
 
         return workflow.compile()
 
-    # --- Node: 规划 (引入 Playbook ) ---
-    def planner(self, state: TargetDiscoveryState) -> Dict:
+    # --- Node: 意图分析 ---
+    def analyze_intent(self, state: TargetDiscoveryState) -> Dict:
         user_input = state["user_input"].strip()
-        print(f"🔒 [Planner] 收到任务: {user_input}")
+        print(f"🔒 [Router] 分析用户意图: {user_input}")
         
-        paths = []
-        task_info = {}
-        # === 规则 1: 验证模式 (格式: "验证" + 基因名) ===
-        # 正则解释:
-        # ^       : 从字符串开头匹配
-        # 验证    : 必须包含“验证”二字
-        # \s* : 允许中间有空格，也可以没有 (兼容 "验证TP53" 和 "验证 TP53")
-        # ([a-zA-Z0-9]+) : 捕获组，提取后面的英文/数字作为基因名
+        # 正则判断是否为验证任务
         match = re.match(r"^验证\s*([a-zA-Z0-9]+)", user_input)
         if match:
-            # 提取基因名并转大写
             target_gene = match.group(1).upper()
-            print(f"   🎯 [规则命中] 验证模式 | 目标基因: {target_gene}")
-
-            # 构造验证任务 (无需 LLM)
-            task_info = {
-                "task_type": "verification",
-                "target_gene": target_gene,
-                "context": "Hepatocellular Carcinoma"
+            print(f"🎯 [Intent] 识别为验证模式 | 目标基因: {target_gene}")
+            return {
+                "task_understanding": {
+                    "task_type": "verification", 
+                    "target_gene": target_gene,
+                    "goal": "specific_validation",
+                    "context": "Hepatocellular Carcinoma"
+                }
+            }
+        else:
+            print(f"🔍 [Intent] 识别为发现模式")
+            return {
+                "task_understanding": {
+                    "task_type": "discovery",
+                    "goal": "novel_exploration"
+                }
             }
 
-            # 构造验证路径: OpenTargets -> Literature -> Omics
-            paths = [{
-                "path_id": f"verify_{target_gene}",
-                "steps": [
-                    {
-                        "tool": "query_opentargets", 
-                        "args": {"genes": [target_gene]}
-                    },
-                    {
-                        "tool": "search_literature", 
-                        "args": {"genes": [target_gene]}
-                    },
-                    {
-                        "tool": "run_omics", 
-                        "args": {"genes": [target_gene]} 
-                    }
-                ]
-            }]
+    # --- Edge Logic: 路由函数 ---
+    def route_based_on_intent(self, state: TargetDiscoveryState) -> str:
+        # 返回 "verification" 或 "discovery"，决定下一步走向
+        return state.get("task_understanding", {}).get("task_type", "discovery")
 
-        # === 规则 2: 发现模式 (其他所有输入) ===
-        else:
-            print(f"   🔍 [默认模式] 发现模式 (Discovery Mode)")
-            
-            # 调用 LLM 理解复杂任务
-            task_info = self.core_system.understand_task(user_input)
-            
-            # 构造发现路径
-            paths = [{
-                "path_id": "discovery_pipeline",
-                "steps": [
-                    {
-                        "tool": "run_omics", 
-                        "args": {} 
-                    },
-                    {
-                        "tool": "query_kg", 
-                        "args": {"genes": "<decide>"} 
-                    },
-                    {
-                        "tool": "search_literature", 
-                        "args": {"genes": "<decide>"} 
-                    }
-                ]
-            }]
+    # --- Node: 验证模式规划 ---
+    def plan_verification(self, state: TargetDiscoveryState) -> Dict:
+        target_gene = state["task_understanding"]["target_gene"]
+        
+        # 构造验证路径: OpenTargets -> Literature -> Omics
+        # 注意: 添加了 mode="strict" 标记
+        paths = [{
+            "path_id": f"verify_{target_gene}",
+            "mode": "strict", 
+            "steps": [
+                {
+                    "tool": "query_opentargets", 
+                    "args": {"genes": [target_gene]}
+                },
+                {
+                    "tool": "search_literature", 
+                    "args": {"genes": [target_gene]}
+                },
+                {
+                    "tool": "run_omics", 
+                    "args": {"genes": [target_gene]} 
+                }
+            ]
+        }]
+        
+        return {
+            "planned_paths": paths,
+            "logs": [{"type": "plan", "mode": "verification", "content": paths}]
+        }
 
-        print(f"   ✅ 路径规划完成")
+    # --- Node: 发现模式规划 ---
+    def plan_discovery(self, state: TargetDiscoveryState) -> Dict:
+        print(f"   📝 [Plan] 调用 LLM 生成发现路径 (Exploratory Mode)...")
+        user_input = state["user_input"]
+        
+        # 调用 LLM 理解复杂任务
+        task_info = self.core_system.understand_task(user_input)
+        
+        # 合并意图分析阶段的基础信息
+        existing_info = state.get("task_understanding", {})
+        full_task_info = {**existing_info, **task_info}
+
+        # 构造发现路径
+        # 注意: 添加了 mode="exploratory" 标记
+        paths = [{
+            "path_id": "discovery_pipeline",
+            "mode": "exploratory",
+            "steps": [
+                {
+                    "tool": "run_omics", 
+                    "args": {} 
+                },
+                {
+                    "tool": "query_kg", 
+                    "args": {"genes": "<decide>"} 
+                },
+                {
+                    "tool": "search_literature", 
+                    "args": {"genes": "<decide>"} 
+                }
+            ]
+        }]
 
         return {
-            "task_understanding": task_info,
+            "task_understanding": full_task_info,
             "planned_paths": paths,
-            "logs": [{"type": "plan", "content": paths}]
+            "logs": [{"type": "plan", "mode": "discovery", "content": paths}]
         }
-    
 
     # --- Node: 执行 (并行加速) ---
     def executor(self, state: TargetDiscoveryState) -> Dict:
         paths = state["planned_paths"]
         task = state["task_understanding"]
-        print(f"🚀 [Executor] 启动并行执行，共 {len(paths)} 条路径...")
-
         path_results = []
         logs = []
         if not paths:
-            print("   ⚠️ 没有路径需要执行")
+            print(" ⚠️ 没有路径需要执行")
             return {"path_results": [], "logs": []}
+            
         # 定义单个路径的运行函数
         def run_single_path(path_spec):
             # 每个线程保留独立的 log list
@@ -134,6 +174,8 @@ class GraphTargetDiscovery:
             except Exception as e:
                 err_msg = f"Path {path_spec.get('path_id')} failed: {str(e)}"
                 print(f"   ❌ {err_msg}")
+                import traceback
+                traceback.print_exc()
                 return {"error": err_msg}, local_logs
 
         # 使用线程池并行执行
@@ -168,7 +210,7 @@ class GraphTargetDiscovery:
         if task_info.get("task_type") == "verification":
             target_gene = task_info.get("target_gene", "").upper()
             if target_gene:
-                print(f"   🔒 [Verification Filter] 验证模式生效，仅保留目标基因: {target_gene}")
+                print(f"   🔒 [Verification Filter] 验证模式仅保留目标基因: {target_gene}")
                 filtered = []
                 for cand in final_candidates:
                     # 获取候选基因名 (兼容字典或字符串格式)

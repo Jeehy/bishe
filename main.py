@@ -24,8 +24,10 @@ def main():
         final_state = app.graph.invoke(initial_state)
         
         # 4. 输出结果
-        print("\n=== 最终候选靶点 ===")
+        print("\n=== LLM 分析结果 ===")
         finals = final_state.get("final_candidates", [])
+        task_info = final_state.get("task_understanding", {})
+        task_type = task_info.get("task_type", "discovery") # 默认为发现模式
         if not finals:
             print("未发现候选")
         else:
@@ -34,7 +36,17 @@ def main():
                 novel = f.get("novel")
                 reason = f.get("reason", "")
                 tag = "新颖" if novel else "已知"
-                print(f"- {gene} ({tag}) | {reason}...")
+
+                if task_type == "verification":
+                    if reason:
+                        print(f"- 验证 {gene}")
+                        # 按照 planner_system 中定义的 " | " 分隔符拆分
+                        evidences = reason.split(" | ")
+                        for ev in evidences:
+                            # 去掉可能的首尾空格
+                            print(f"  * {ev.strip()}")
+                else:
+                    print(f"- {gene} ({tag}) | {reason}...")
 
         # 5. 保存完整日志
         out = {

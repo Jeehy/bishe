@@ -3,6 +3,7 @@
 
 # === 工具规格说明 (嵌入到 Prompt 中) ===
 # 这部分文本会被硬编码到下方的 Prompt 中，指导 LLM 如何使用工具参数
+
 TOOL_SPECS_TEXT = """
 【工具详细规格说明 (Tool Specs)】
 1. search_literature (文献证据检索 - 核心工具):
@@ -27,6 +28,31 @@ TOOL_SPECS_TEXT = """
 """
 
 # 注意：以下均使用普通字符串 (无 f 前缀)，避免提前转义花括号
+
+VERIFICATION_SYNTHESIS_PROMPT = """
+验证综合（Verification Synthesis）
+
+目标：请基于执行结果，对目标基因进行全方位的验证评估。
+
+*** IMPORTANT STRATEGY ***
+1. **聚焦目标**: 你的核心任务是验证用户指定的基因（例如：{target_gene}）。
+2. **客观评估**: 无论基因是否显著、是否已知，都必须将其包含在结果中，并如实报告其证据强度。
+   - 如果 Omics 不显著，请明确指出 "Omics evidence is weak/insignificant"。
+   - 如果 Literature 丰富，请指出 "Strong literature support"。
+   - 如果 OpenTargets 分数高，请指出 "Known target"。
+3. **不要过滤**: 你的任务是"汇报情况"而不是"筛选新颖靶点"。**绝对不要**因为基因是"已知"的或"不显著"的就将其移除。
+
+输入数据（Payload）：
+{payload}
+
+请严格输出 JSON（无额外文本），字段要求：
+- reasoning_chain: 字符串，综合评价该基因的证据链（支持 vs 不支持）。
+- candidate_targets: 字符串数组，必须包含正在验证的目标基因。
+- novelty_notes: 字典对象，格式为 {{ "GeneName": {{ "novel": bool, "reason": "..." }} }}。对于已知基因，novel 应为 false。
+- confidence: 0-1 之间浮点数，表示对该基因作为靶点的综合推荐度（即便不新颖，如果证据强，置信度也可以高）。
+- new_queries: 数组或空数组。
+- change_path: true/false
+"""
 
 TASK_UNDERSTAND_PROMPT = """
 任务理解（Task Understanding）

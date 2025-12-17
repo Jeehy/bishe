@@ -246,7 +246,7 @@ class MongoLocalTool:
         """
         工具入口 - 支持批量 genes 处理 (带 LLM 自动总结和文件转储)
         """
-        print(f"[MongoLocalTool]: 正在检索文献...")
+        print(f"    [MongoLocalTool]: 正在检索文献...")
         
         gene = context.get("gene")
         genes = context.get("genes")

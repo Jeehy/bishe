@@ -5,7 +5,8 @@ from deepseek_api import model_call
 from executor import ToolExecutor
 from prompt import (
     TASK_UNDERSTAND_PROMPT, PATH_PLANNER_PROMPT,
-    PATH_EXECUTOR_PROMPT, REFLECTOR_PROMPT, STEP_DECIDER_PROMPT
+    PATH_EXECUTOR_PROMPT, REFLECTOR_PROMPT, STEP_DECIDER_PROMPT,
+    VERIFICATION_SYNTHESIS_PROMPT
 )
 
 # === 辅助工具 ===
@@ -62,7 +63,6 @@ class PlannerSystem:
     def _llm(self, prompt: str) -> dict:
         return safe_parse_json(model_call(prompt))
 
-    # === 核心 Prompt 调用 ===
     def understand_task(self, user_input: str):
         return self._llm(TASK_UNDERSTAND_PROMPT.format(available_tools=",".join(self.available_tools), user_input=user_input))
 
@@ -89,17 +89,19 @@ class PlannerSystem:
     def reflect_paths(self, paths_results: list, context_playbook: str = "none"):
         return self._llm(REFLECTOR_PROMPT.format(paths_results=json.dumps(paths_results, ensure_ascii=False, cls=MongoDBJSONEncoder), context_playbook=context_playbook))
 
-    # === 瘦身后的主执行循环 ===
+    # === 主执行循环 ===
     def execute_path_with_reflection(self, path_spec: dict, task_json: dict, logs: list):
         path_id = path_spec.get("path_id", "unknown_path")
+        # 获取执行模式，默认为 exploratory (发现模式)
+        execution_mode = path_spec.get("mode", "exploratory")
+
         steps = list(path_spec.get("steps", []))
         history = [] 
         active_genes_bus = [] # 上下文总线
         searched_genes_history = set()
         evidence_dir = f"evidence_data/{path_id}"
         os.makedirs(evidence_dir, exist_ok=True)
-        print(f"\n🚀 [Path: {path_id}] 开始执行，共 {len(steps)} 步...")
-
+        
         i = 0
         while i < len(steps) and i < 50: # 防止死循环
             # 1. 动态决策 (Pre-Step)
@@ -129,18 +131,16 @@ class PlannerSystem:
                 # 获取当前参数中的基因列表
                 target_genes = tool_args.get("genes", [])
                 if isinstance(target_genes, str): target_genes = [target_genes]
-                
                 # 过滤掉已经查过的基因
                 new_genes = [g for g in target_genes if g not in searched_genes_history]
-                
                 # 如果有被过滤的，打印日志
                 if len(new_genes) < len(target_genes):
                     skipped = set(target_genes) - set(new_genes)
-                    print(f"     🧹 [Deduplication] 跳过已检索基因: {list(skipped)}")
+                    print(f" 🧹 [Deduplication] 跳过已检索基因: {list(skipped)}")
                 
                 # 如果过滤后没有基因了，跳过此步
                 if not new_genes:
-                    print(f"     ⏭️ [Skip] 所有目标基因均已检索过文献，跳过此步。")
+                    print(f" ⏭️ [Skip] 所有目标基因均已检索过文献，跳过此步。")
                     logs.append({"type": "skip", "step": tool_name, "reason": "duplicate_genes"})
                     i += 1
                     continue
@@ -151,23 +151,22 @@ class PlannerSystem:
 
             # 3. 执行工具
             logs.append({"type":"executing", "step": tool_name, "args": tool_args})
-            print(f"  👉 [Path: {path_id}] [Step {i+1}] 执行: {tool_name} | 参数: {list(tool_args.keys())}")
+            print(f"👉 [Step {i+1}] 执行: {tool_name} | 参数: {list(tool_args.keys())}")
             
             task_context = {"task": task_json, **tool_args}
             tool_output = self.executor.execute(tool_name, task_context, history=history)
 
             # 4. 上下文总线：结果捕获
-            # 4. 上下文总线：结果捕获
-            # 🆕 [Fix] 验证模式锁定：防止 OpenTargets 等工具返回的关联基因干扰主线
-            if str(path_id).startswith("verify_"):
-                print(f"     🔒 [Path: {path_id}] [Bus] 验证模式")
+            # 验证模式锁定：防止发散
+            if execution_mode == "strict":
+                pass # 不自动捕获新基因，专注验证目标
             else:
-                # 只有非验证模式（发现模式）才允许发散思维
+                # 发现模式：允许发散思维
                 new_genes = extract_genes_from_result(tool_name, tool_output)
                 if new_genes:
                     active_genes_bus = new_genes
-                    print(f"     📥 [Path: {path_id}] [Bus] 捕获 {len(new_genes)} 个新基因")
-            # === 修改结束 ===
+                    print(f"     📥 捕获 {len(new_genes)} 个新基因")
+            # ==================
 
             # 5. 保存证据 & 更新历史
             self._save_evidence_file(evidence_dir, i, tool_name, tool_args, tool_output, path_id)
@@ -180,7 +179,7 @@ class PlannerSystem:
             
             i += 1
 
-        print(f"🏁 [Path: {path_id}] 执行完毕，综合结果中...")
+        print(f"🏁 执行完毕，综合结果中...")
         synthesis = self.synthesize_path(path_spec, history, task_json)
         # 传入 path_id 用于溯源
         synthesis = self._ensure_novelty_notes(synthesis, history, path_id)
@@ -197,7 +196,7 @@ class PlannerSystem:
             existing = tool_args.get("genes") or tool_args.get("gene")
             # 如果参数为空、或者只是占位符/默认值，则注入总线中的基因
             if not existing or existing in ["<decide>", "TP53"]:
-                print(f"     🔗 [Path: {path_id}] [Auto-Inject] 为 {tool_name} 注入 {len(active_genes_bus)} 个基因")
+                print(f"     🔗  {tool_name} 注入 {len(active_genes_bus)} 个基因")
                 tool_args["genes"] = active_genes_bus
                 if "gene" in tool_args: del tool_args["gene"]
 
@@ -207,9 +206,9 @@ class PlannerSystem:
             with open(fname, "w", encoding="utf-8") as f:
                 json.dump({"path_id": path_id, "step": index, "tool": tool, "args": args, "result": result}, 
                           f, ensure_ascii=False, indent=2, cls=MongoDBJSONEncoder)
-            print(f"     ✅ [Path: {path_id}] 证据已保存: {os.path.basename(fname)}")
+            print(f"     ✅ 证据已保存: {os.path.basename(fname)}")
         except Exception as e:
-            print(f"     ⚠️ [Path: {path_id}] 保存失败: {e}")
+            print(f"     ⚠️ 保存失败: {e}")
 
     def _handle_dynamic_decision(self, history, steps, current_index, logs, path_id, is_pre_step=False) -> bool:
         current_step_name = ""
@@ -231,13 +230,13 @@ class PlannerSystem:
         logs.append({"type": "decide", "decision": decision})
 
         if dec_type == "STOP":
-            print(f"🛑 [Path: {path_id}] 决策: 停止执行")
+            print(f"🛑 决策: 停止执行")
             return True
         elif dec_type == "INSERT":
             tool, args = decision.get("tool"), decision.get("args", {})
             if tool:
                 steps.insert(current_index + 1, {"tool": tool, "args": args, "reason": "dynamic_insert"})
-                print(f"     🔄 [Path: {path_id}] 动态插入: {tool}")
+                print(f"     🔄 动态插入: {tool}")
                 if is_pre_step and current_step_name.startswith("<"):
                     if current_index < len(steps):
                         steps.pop(current_index)
@@ -263,7 +262,19 @@ class PlannerSystem:
             cleaned_intermediate.append(clean_item)
 
         payload = {"path_spec": path_spec, "intermediate_outputs": cleaned_intermediate, "task_understanding": task_understanding}
-        prompt = PATH_EXECUTOR_PROMPT.replace("{payload}", json.dumps(payload, ensure_ascii=False, indent=2, cls=MongoDBJSONEncoder))
+        
+        # 根据任务类型选择不同的综合 Prompt 
+        task_type = task_understanding.get("task_type", "discovery")
+        
+        if task_type == "verification":
+            target_gene = task_understanding.get("target_gene", "Target")
+            # 使用验证专用的 Prompt
+            prompt = VERIFICATION_SYNTHESIS_PROMPT.replace("{payload}", json.dumps(payload, ensure_ascii=False, indent=2, cls=MongoDBJSONEncoder))
+            prompt = prompt.replace("{target_gene}", target_gene)
+        else:
+            # 默认发现模式 Prompt
+            prompt = PATH_EXECUTOR_PROMPT.replace("{payload}", json.dumps(payload, ensure_ascii=False, indent=2, cls=MongoDBJSONEncoder))
+            
         return self._llm(prompt)
 
     # === [证据链生成与过滤 ===
@@ -315,7 +326,7 @@ class PlannerSystem:
             # (C) 文献证据
             if tool in ["search_literature", "search_pubmed_mongo"]:
                 
-                # 🆕 优先检查是否存在结构化的 gene_details
+                # 优先检查是否存在结构化的 gene_details
                 gene_details = result.get("gene_details", {})
                 
                 if gene_details:
@@ -323,6 +334,16 @@ class PlannerSystem:
                     for g_key, detail in gene_details.items():
                         count = detail.get("count", 0)
                         summary = detail.get("summary", "")
+                        if isinstance(summary, str):
+                            summary = summary.strip()
+                            # 如果看起来像 JSON，尝试解析
+                            if summary.startswith("{") and "summary" in summary:
+                                try:
+                                    parsed = json.loads(summary)
+                                    if isinstance(parsed, dict):
+                                        summary = parsed.get("summary", summary)
+                                except:
+                                    pass
                         if count > 0:
                             # 格式：[Step X Lit] (5篇) 这是一个癌基因...
                             ev_str = f"[Step {step_num} Lit] ({count}篇) {summary}"
@@ -330,7 +351,6 @@ class PlannerSystem:
                             gene_evidence_map[g_key.upper()].append(ev_str)
                 
                 else:
-                    # ⚠️ 旧逻辑回退（如果没有 gene_details，才用总数）
                     n_res = result.get("n_results", 0)
                     if n_res > 0:
                         target_genes = step_data.get("args", {}).get("genes", [])
